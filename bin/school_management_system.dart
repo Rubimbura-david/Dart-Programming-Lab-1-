@@ -1,6 +1,20 @@
 import 'dart:async';
 import 'dart:io';
 
+// ==================== SHARED FUNCTIONS ====================
+Future<List<Student>> loadStudents() async {
+  print('Loading students from database...');
+  await Future.delayed(Duration(seconds: 2));
+
+  return [
+    Student('Emma Johnson', 16),
+    Student('Noah Williams', 17),
+    Student('Olivia Brown', 15),
+    Student('Liam Davis', 16),
+    Student('Ava Miller', 17),
+  ];
+}
+
 // ==================== QUESTION 1 ====================
 void welcomeMessage() {
   print('==========================================');
@@ -43,10 +57,10 @@ void runQuestion2() {
 }
 
 // ==================== QUESTION 3 ====================
-void createTeacher(String name, [String subject = 'General Education']) {
+void createTeacher(String name, [String? subject]) {
   print('\n--- Teacher Record Created ---');
   print('Teacher Name: $name');
-  print('Subject: $subject');
+  print('Subject: ${subject ?? 'Subject not assigned'}');
   print(
     'Teacher ID: TCH-${name.split(' ').map((s) => s[0]).join('').toUpperCase()}',
   );
@@ -61,18 +75,75 @@ void runQuestion3() {
   print('Demonstrating required and optional parameters:\n');
 
   createTeacher('Mr. Davis', 'Mathematics');
-  createTeacher('Ms. Rodriguez'); // Uses default subject
+  createTeacher('Ms. Rodriguez'); // Shows 'Subject not assigned'
 
-  print('\nNote: Subject parameter is optional with default value');
+  print(
+    '\nNote: When subject is not provided, it prints "Subject not assigned"',
+  );
+}
+
+// ==================== QUESTION 6 ====================
+class Person {
+  String name;
+
+  Person(this.name);
+
+  void introduce() {
+    print('Hello, my name is $name.');
+  }
+}
+
+// ==================== QUESTION 10 ====================
+mixin AttendanceMixin {
+  int _attendanceCount = 0;
+
+  void markAttendance() {
+    _attendanceCount++;
+    print('Attendance marked. Total: $_attendanceCount');
+  }
+
+  int get attendanceCount => _attendanceCount;
+}
+
+// ==================== QUESTION 8 ====================
+abstract class Registrable {
+  void registerCourse(String courseName);
+}
+
+// ==================== QUESTION 19 ====================
+mixin NotificationMixin {
+  void sendCourseNotification(String studentName, String courseName) {
+    print('📧 Notification sent to $studentName:');
+    print('   "You have been registered for $courseName"');
+  }
 }
 
 // ==================== QUESTION 4 ====================
-class Student {
-  String name;
+// Main Student class that incorporates all features
+class Student extends Person
+    with AttendanceMixin, NotificationMixin
+    implements Registrable {
   int age;
+  List<String> courses = [];
 
   // Constructor for Q4
-  Student(this.name, this.age);
+  Student(String name, this.age) : super(name);
+
+  // Method for Q9
+  @override
+  void registerCourse(String courseName) {
+    courses.add(courseName);
+    print('$name has registered for: $courseName');
+    sendCourseNotification(name, courseName); // From NotificationMixin
+  }
+
+  // Additional method to show all info
+  void showInfo() {
+    introduce();
+    print('Age: $age');
+    print('Courses: ${courses.isNotEmpty ? courses.join(", ") : "None"}');
+    print('Attendance: $attendanceCount days');
+  }
 }
 
 void runQuestion4() {
@@ -101,16 +172,6 @@ void runQuestion5() {
 }
 
 // ==================== QUESTION 6 ====================
-class Person {
-  String name;
-
-  Person(this.name);
-
-  void introduce() {
-    print('Hello, my name is $name.');
-  }
-}
-
 void runQuestion6() {
   print('\n' + '=' * 50);
   print('QUESTION 6: Person Class with introduce() Method');
@@ -121,34 +182,20 @@ void runQuestion6() {
 }
 
 // ==================== QUESTION 7 ====================
-class StudentV2 extends Person {
-  int age;
-
-  StudentV2(String name, this.age) : super(name);
-
-  void displayStudentInfo() {
-    introduce(); // Inherited from Person
-    print('I am $age years old and a student.');
-  }
-}
-
 void runQuestion7() {
   print('\n' + '=' * 50);
   print('QUESTION 7: Inheritance - Student extends Person');
   print('=' * 50);
 
-  StudentV2 student = StudentV2('Sarah Johnson', 15);
-  print('Calling inherited introduce() method:');
+  Student student = Student('Sarah Johnson', 15);
+  print('Calling inherited introduce() method from Student object:');
   student.introduce();
+
   print('\nCalling Student-specific method:');
-  student.displayStudentInfo();
+  student.showInfo();
 }
 
 // ==================== QUESTION 8 ====================
-abstract class Registrable {
-  void registerCourse(String courseName);
-}
-
 void runQuestion8() {
   print('\n' + '=' * 50);
   print('QUESTION 8: Abstract Class Registrable');
@@ -158,46 +205,25 @@ void runQuestion8() {
   print('  - Contains abstract method: registerCourse()');
   print('  - Cannot be instantiated directly');
   print('  - Must be implemented by concrete classes');
+  print('  - Acts as an interface contract');
 }
 
 // ==================== QUESTION 9 ====================
-class StudentV3 extends Person implements Registrable {
-  int age;
-  List<String> courses = [];
-
-  StudentV3(String name, this.age) : super(name);
-
-  @override
-  void registerCourse(String courseName) {
-    courses.add(courseName);
-    print('$name has registered for: $courseName');
-  }
-}
-
 void runQuestion9() {
   print('\n' + '=' * 50);
   print('QUESTION 9: Student implements Registrable Interface');
   print('=' * 50);
 
-  StudentV3 student = StudentV3('David Lee', 17);
-  print('Registering courses:');
+  Student student = Student('David Lee', 17);
+  print('Registering courses (implements Registrable interface):');
   student.registerCourse('Mathematics');
   student.registerCourse('Computer Science');
   student.registerCourse('Physics');
+
+  print('\nCurrent courses: ${student.courses.join(", ")}');
 }
 
 // ==================== QUESTION 10 ====================
-mixin AttendanceMixin {
-  int _attendanceCount = 0;
-
-  void markAttendance() {
-    _attendanceCount++;
-    print('Attendance marked. Total: $_attendanceCount');
-  }
-
-  int get attendanceCount => _attendanceCount;
-}
-
 void runQuestion10() {
   print('\n' + '=' * 50);
   print('QUESTION 10: AttendanceMixin');
@@ -207,43 +233,25 @@ void runQuestion10() {
   print('  - Private variable: _attendanceCount');
   print('  - Method: markAttendance()');
   print('  - Getter: attendanceCount');
-  print('  - Can be added to multiple classes');
+  print('  - Can be added to multiple classes using "with" keyword');
+  print('  - Provides reusable attendance tracking behavior');
 }
 
 // ==================== QUESTION 11 ====================
-class StudentV4 extends Person with AttendanceMixin implements Registrable {
-  int age;
-  List<String> courses = [];
-
-  StudentV4(String name, this.age) : super(name);
-
-  @override
-  void registerCourse(String courseName) {
-    courses.add(courseName);
-    print('$name registered for: $courseName');
-  }
-
-  void showInfo() {
-    introduce();
-    print('Age: $age');
-    print('Courses: ${courses.join(", ")}');
-    print('Attendance: $attendanceCount days');
-  }
-}
-
 void runQuestion11() {
   print('\n' + '=' * 50);
   print('QUESTION 11: Student with AttendanceMixin');
   print('=' * 50);
 
-  StudentV4 student = StudentV4('Olivia Brown', 16);
+  Student student = Student('Olivia Brown', 16);
 
-  print('Marking attendance 3 times:');
+  print('Marking attendance 3 times (using AttendanceMixin):');
   for (int i = 0; i < 3; i++) {
     student.markAttendance();
   }
 
   print('\nFinal attendance count: ${student.attendanceCount}');
+  print('Mixins allow adding behavior without inheritance hierarchy!');
 }
 
 // ==================== QUESTION 12 ====================
@@ -262,28 +270,52 @@ void runQuestion12() {
   for (int i = 0; i < students.length; i++) {
     print('${i + 1}. ${students[i].name}, Age: ${students[i].age}');
   }
+
+  print('\nList characteristics:');
+  print('  - Ordered collection (maintains insertion order)');
+  print('  - Allows duplicate elements');
+  print('  - Access elements by index (0-based)');
+  print('  - Perfect for storing multiple similar objects');
 }
 
 // ==================== QUESTION 13 ====================
 void runQuestion13() {
   print('\n' + '=' * 50);
-  print('QUESTION 13: Map with Student Objects');
+  print('QUESTION 13: Map with Student Objects (ID as Key)');
   print('=' * 50);
 
+  // Create students first
+  Student s1 = Student('Alex Turner', 16);
+  Student s2 = Student('Maya Patel', 15);
+  Student s3 = Student('Ryan Kim', 17);
+  Student s4 = Student('Lily Chen', 16);
+
+  // Generate student IDs using the same logic as createStudent function
+  String generateStudentId(String name, int age) {
+    return 'STU-${name.substring(0, 3).toUpperCase()}${age}';
+  }
+
+  // Create map with student ID as key and Student object as value
   Map<String, Student> studentMap = {
-    'S001': Student('Alex Turner', 16),
-    'S002': Student('Maya Patel', 15),
-    'S003': Student('Ryan Kim', 17),
-    'S004': Student('Lily Chen', 16),
+    generateStudentId(s1.name, s1.age): s1,
+    generateStudentId(s2.name, s2.age): s2,
+    generateStudentId(s3.name, s3.age): s3,
+    generateStudentId(s4.name, s4.age): s4,
   };
 
-  print('Student Map (ID → Student):');
-  print('Total students: ${studentMap.length}');
-  print('\nStudent Names:');
+  print('Student Map (Student ID → Student Object):');
+  print('Total students in map: ${studentMap.length}');
 
+  print('\nAll Student Names (accessed via map):');
   studentMap.forEach((id, student) {
-    print('  $id: ${student.name}');
+    print('  • ID: $id → Name: ${student.name} (Age: ${student.age})');
   });
+
+  print('\nMap characteristics:');
+  print('  - Key-value pairs (Student ID → Student Object)');
+  print('  - Keys must be unique (student IDs are unique)');
+  print('  - Fast lookup by key (O(1) access time)');
+  print('  - Perfect for database-like lookups');
 }
 
 // ==================== QUESTION 14 ====================
@@ -298,23 +330,28 @@ void runQuestion14() {
     Student('Sophia Davis', 17),
   ];
 
-  print('Printing names using anonymous function:');
+  print('Printing names using anonymous function with forEach:');
 
-  // Anonymous function
+  // Anonymous function (no name, defined inline)
   students.forEach((student) {
     print('  - ${student.name}');
   });
 
-  // Another example with map
-  print('\nTransforming list with anonymous function:');
+  print('\nTransforming list with anonymous function using map:');
   List<String> names = students
       .map((student) => student.name.toUpperCase())
       .toList();
   print('Uppercase names: $names');
+
+  print('\nAnonymous function characteristics:');
+  print('  - No name (defined inline where used)');
+  print('  - Can capture variables from surrounding scope');
+  print('  - Often used as callbacks or for simple operations');
+  print('  - Makes code more concise for one-time use functions');
 }
 
 // ==================== QUESTION 15 ====================
-// Arrow function
+// Arrow function (single expression function)
 void greetStudent(String name) => print('🎓 Welcome to class, $name!');
 
 void runQuestion15() {
@@ -326,59 +363,46 @@ void runQuestion15() {
   greetStudent('Michael');
   greetStudent('Sarah');
   greetStudent('David');
+
+  print('\nArrow function characteristics:');
+  print('  - Uses => syntax for single expression functions');
+  print('  - No braces or return statement needed');
+  print('  - Automatically returns the expression value');
+  print('  - More concise than traditional function syntax');
+  print('  - Ideal for simple one-liner functions');
 }
 
 // ==================== QUESTION 16 ====================
-// Async function - CHANGED: Now returns Future<void>
 Future<void> runQuestion16() async {
   print('\n' + '=' * 50);
   print('QUESTION 16: Async Function loadStudents()');
   print('=' * 50);
 
-  print('Starting to load students...');
+  print('Starting to load students (simulating network request)...');
 
-  // Define the async function here
-  Future<List<Student>> loadStudents() async {
-    print('Loading students...');
-    await Future.delayed(Duration(seconds: 2));
-
-    return [
-      Student('Emma Johnson', 16),
-      Student('Noah Williams', 17),
-      Student('Olivia Brown', 15),
-      Student('Liam Davis', 16),
-      Student('Ava Miller', 17),
-    ];
-  }
-
+  // Using the shared loadStudents() function
   var students = await loadStudents();
   print('✓ Students loaded successfully!');
-  print('Sample student: ${students.first.name}');
+  print('First student: ${students.first.name}');
+  print('Total loaded: ${students.length} students');
+
+  print('\nAsync function characteristics:');
+  print('  - Returns Future<T> (promise of future value)');
+  print('  - Uses async keyword in declaration');
+  print('  - Can use await to wait for Future completion');
+  print('  - Non-blocking (allows other code to run while waiting)');
+  print('  - Essential for I/O operations (network, files, databases)');
 }
 
 // ==================== QUESTION 17 ====================
-// Async function - CHANGED: Now returns Future<void>
 Future<void> runQuestion17() async {
   print('\n' + '=' * 50);
   print('QUESTION 17: Using await with loadStudents()');
   print('=' * 50);
 
-  print('Loading students with await...');
+  print('Calling loadStudents() with await in main-like context...');
 
-  // Define the async function here
-  Future<List<Student>> loadStudents() async {
-    print('Loading students...');
-    await Future.delayed(Duration(seconds: 2));
-
-    return [
-      Student('Emma Johnson', 16),
-      Student('Noah Williams', 17),
-      Student('Olivia Brown', 15),
-      Student('Liam Davis', 16),
-      Student('Ava Miller', 17),
-    ];
-  }
-
+  // Using the shared loadStudents() function
   List<Student> students = await loadStudents();
   print('Total students loaded: ${students.length}');
 
@@ -386,6 +410,13 @@ Future<void> runQuestion17() async {
   for (var student in students) {
     print('  • ${student.name} (Age: ${student.age})');
   }
+
+  print('\nUsing await:');
+  print('  - await pauses execution until Future completes');
+  print('  - Makes async code look like synchronous code');
+  print('  - Must be used inside async function');
+  print('  - Error handling with try-catch blocks');
+  print('  - Essential for sequential async operations');
 }
 
 // ==================== QUESTION 18 ====================
@@ -395,276 +426,116 @@ void runQuestion18() {
   print('=' * 50);
 
   print('WHY MIXINS ARE USEFUL:');
-  print('1. Code Reuse: Share functionality across unrelated classes');
-  print('2. Avoid Diamond Problem: No issues with multiple inheritance');
-  print('3. Flexibility: Add behaviors without creating deep hierarchies');
-  print('4. Composition over Inheritance: Combine behaviors as needed');
+  print(
+    '1. Code Reuse Across Hierarchies: Share functionality between unrelated classes',
+  );
+  print(
+    '2. Avoid Diamond Problem: No ambiguity when same method exists in multiple parents',
+  );
+  print(
+    '3. Flexible Composition: Add behaviors like building blocks, not rigid hierarchies',
+  );
+  print(
+    '4. Single Responsibility: Keep classes focused, mixins handle cross-cutting concerns',
+  );
+  print('5. Testability: Mixins can be tested independently');
 
-  print('\nDIFFERENCES:');
-  print('───────────────────────────────────────');
-  print('| INHERITANCE         | MIXINS        |');
-  print('|─────────────────────|───────────────|');
-  print('| "is-a" relationship | "has-a" trait |');
-  print('| Single parent       | Multiple mixins|');
-  print('| Deep hierarchy      | Flat structure|');
-  print('| Tight coupling      | Loose coupling|');
-  print('───────────────────────────────────────');
+  print('\nDIFFERENCES BETWEEN INHERITANCE AND MIXINS:');
+  print('┌─────────────────────────────────────────────────┐');
+  print('│     INHERITANCE                MIXINS           │');
+  print('├─────────────────────────────────────────────────┤');
+  print('│ "is-a" relationship         "has-a" capability  │');
+  print('│ Single parent only          Multiple mixins     │');
+  print('│ Deep class hierarchy        Flat composition    │');
+  print('│ Tight coupling              Loose coupling      │');
+  print('│ Compile-time resolution     Linearized order    │');
+  print('│ Hard to change later        Easy to add/remove  │');
+  print('└─────────────────────────────────────────────────┘');
 
-  print('\nEXAMPLE:');
-  print('• Inheritance: Student IS-A Person');
-  print('• Mixin: Student HAS Attendance tracking');
+  print('\nPRACTICAL EXAMPLE IN OUR CODE:');
+  print('• Inheritance: Student IS-A Person (gets basic identity)');
+  print('• Mixin 1: Student HAS Attendance tracking capability');
+  print('• Mixin 2: Student HAS Notification capability');
+  print('• Result: Flexible, reusable behaviors without complex hierarchy');
 }
 
 // ==================== QUESTION 19 ====================
-mixin NotificationMixin {
-  void sendCourseNotification(String studentName, String courseName) {
-    print('📧 Notification sent to $studentName:');
-    print('   "You have been registered for $courseName"');
-  }
-}
-
-class StudentV5 extends Person
-    with AttendanceMixin, NotificationMixin
-    implements Registrable {
-  int age;
-  List<String> courses = [];
-
-  StudentV5(String name, this.age) : super(name);
-
-  @override
-  void registerCourse(String courseName) {
-    courses.add(courseName);
-    sendCourseNotification(name, courseName);
-  }
-}
-
 void runQuestion19() {
   print('\n' + '=' * 50);
   print('QUESTION 19: NotificationMixin');
   print('=' * 50);
 
-  StudentV5 student = StudentV5('Daniel White', 18);
+  Student student = Student('Daniel White', 18);
 
-  print('Registering courses with notifications:');
+  print('Registering courses with automatic notifications:');
   student.registerCourse('Advanced Mathematics');
   student.registerCourse('Data Structures');
 
-  print('\nStudent now has 2 mixins:');
-  print('1. AttendanceMixin');
-  print('2. NotificationMixin');
-}
+  print('\nDemonstrating all capabilities of the enhanced Student:');
+  print('1. Inherited from Person:');
+  student.introduce();
 
-// ==================== QUESTION 20 ====================
-void runQuestion20() {
-  print('\n' + '=' * 50);
-  print('QUESTION 20: Dart & Flutter Connection');
-  print('=' * 50);
+  print('\n2. Using AttendanceMixin:');
+  student.markAttendance();
+  student.markAttendance();
+  print('   Total attendance: ${student.attendanceCount}');
 
-  print('HOW LEARNING DART HELPS UNDERSTAND FLUTTER:\n');
+  print('\n3. Using NotificationMixin:');
+  print('   (Already demonstrated during course registration)');
 
-  print(
-    '''Dart is the foundation of Flutter development. By learning Dart, we gain:
+  print('\n4. Implementing Registrable interface:');
+  print('   Course registration method is required by interface');
 
-1. WIDGET UNDERSTANDING: 
-   • Flutter widgets are Dart classes
-   • State management uses Dart's reactive programming
-
-2. ASYNC OPERATIONS:
-   • Flutter apps heavily use async/await for API calls
-   • Future and Stream are core Dart concepts
-
-3. OBJECT-ORIENTED STRUCTURE:
-   • Flutter's widget tree is built using Dart OOP
-   • Inheritance and mixins create reusable UI components
-
-4. TYPE SAFETY:
-   • Dart's strong typing prevents runtime errors in Flutter
-   • Null safety ensures robust mobile applications
-
-5. HOT RELOAD:
-   • Dart's JIT compiler enables Flutter's fast development cycle
-   • Quick iteration is possible because of Dart's architecture
-
-Learning Dart first makes Flutter development intuitive because every Flutter app is essentially a well-structured Dart program with a UI layer.''',
-  );
+  print('\nStudent now combines:');
+  print('  • Inheritance (Person)');
+  print('  • 2 Mixins (Attendance, Notification)');
+  print('  • 1 Interface (Registrable)');
+  print('  • All working together seamlessly!');
 }
 
 // ==================== MAIN MENU SYSTEM ====================
 void displayMainMenu() {
   print('\n' + '=' * 70);
-  print('DART PROGRAMMING LABORATORY ASSIGNMENT - ALL QUESTIONS (1-20)');
+  print('DART PROGRAMMING LABORATORY ASSIGNMENT - QUESTIONS 1-19');
   print('=' * 70);
 
   print('\nSELECT QUESTION TO RUN:');
   print('┌─────────────────────────────────────────────────┐');
-  for (int i = 1; i <= 20; i++) {
-    String description = '';
-    if (i == 1)
-      description = 'Welcome Message';
-    else if (i == 2)
-      description = 'Named Parameters';
-    else if (i == 3)
-      description = 'Optional Parameters';
-    else if (i == 4)
-      description = 'Class & Constructor';
-    else if (i == 5)
-      description = 'Object Creation';
-    else if (i == 6)
-      description = 'Class with Method';
-    else if (i == 7)
-      description = 'Inheritance';
-    else if (i == 8)
-      description = 'Abstract Class';
-    else if (i == 9)
-      description = 'Interface Implementation';
-    else if (i == 10)
-      description = 'Mixin Creation';
-    else if (i == 11)
-      description = 'Using Mixin';
-    else if (i == 12)
-      description = 'List of Objects';
-    else if (i == 13)
-      description = 'Map of Objects';
-    else if (i == 14)
-      description = 'Anonymous Function';
-    else if (i == 15)
-      description = 'Arrow Function';
-    else if (i == 16)
-      description = 'Async Function';
-    else if (i == 17)
-      description = 'Using await';
-    else if (i == 18)
-      description = 'Mixins vs Inheritance';
-    else if (i == 19)
-      description = 'Another Mixin';
-    else if (i == 20)
-      description = 'Dart & Flutter';
-
-    print(
-      '│ ${i.toString().padLeft(2)}. Question $i: ${description.padRight(25)}│',
-    );
-  }
+  print('│  1. Question 1: Welcome Message                 │');
+  print('│  2. Question 2: Named Parameters                │');
+  print('│  3. Question 3: Optional Parameters             │');
+  print('│  4. Question 4: Class & Constructor             │');
+  print('│  5. Question 5: Object Creation                 │');
+  print('│  6. Question 6: Class with Method               │');
+  print('│  7. Question 7: Inheritance                     │');
+  print('│  8. Question 8: Abstract Class                  │');
+  print('│  9. Question 9: Interface Implementation        │');
+  print('│ 10. Question 10: Mixin Creation                 │');
+  print('│ 11. Question 11: Using Mixin                    │');
+  print('│ 12. Question 12: List of Objects                │');
+  print('│ 13. Question 13: Map of Objects                 │');
+  print('│ 14. Question 14: Anonymous Function             │');
+  print('│ 15. Question 15: Arrow Function                 │');
+  print('│ 16. Question 16: Async Function                 │');
+  print('│ 17. Question 17: Using await                    │');
+  print('│ 18. Question 18: Mixins vs Inheritance          │');
+  print('│ 19. Question 19: Another Mixin                  │');
   print('├─────────────────────────────────────────────────┤');
-  print('│ A.  Run ALL Questions (1-20)                    │');
+  print('│ A.  Run ALL Questions (1-19)                    │');
   print('│ G.  Run Group 1-5 (Basics)                      │');
   print('│ M.  Run Group 6-10 (OOP)                        │');
   print('│ D.  Run Group 11-15 (Collections & Functions)   │');
-  print('│ F.  Run Group 16-20 (Advanced Topics)           │');
+  print('│ F.  Run Group 16-19 (Advanced Topics)           │');
   print('│ X.  Exit Program                                │');
   print('└─────────────────────────────────────────────────┘');
 }
 
-void main() async {
-  bool continueRunning = true;
-
-  print('\n🎓 DART LABORATORY ASSIGNMENT 🎓');
-  print('Group Members: [Your Name] & [Partner\'s Name]');
-  print('Date: ${DateTime.now().toLocal()}');
-
-  while (continueRunning) {
-    displayMainMenu();
-
-    stdout.write('\nEnter your choice (1-20, A, G, M, D, F, X): ');
-    String? choice = stdin.readLineSync()?.toUpperCase();
-
-    switch (choice) {
-      case '1':
-        runQuestion1();
-        break;
-      case '2':
-        runQuestion2();
-        break;
-      case '3':
-        runQuestion3();
-        break;
-      case '4':
-        runQuestion4();
-        break;
-      case '5':
-        runQuestion5();
-        break;
-      case '6':
-        runQuestion6();
-        break;
-      case '7':
-        runQuestion7();
-        break;
-      case '8':
-        runQuestion8();
-        break;
-      case '9':
-        runQuestion9();
-        break;
-      case '10':
-        runQuestion10();
-        break;
-      case '11':
-        runQuestion11();
-        break;
-      case '12':
-        runQuestion12();
-        break;
-      case '13':
-        runQuestion13();
-        break;
-      case '14':
-        runQuestion14();
-        break;
-      case '15':
-        runQuestion15();
-        break;
-      case '16':
-        await runQuestion16();
-        break;
-      case '17':
-        await runQuestion17();
-        break;
-      case '18':
-        runQuestion18();
-        break;
-      case '19':
-        runQuestion19();
-        break;
-      case '20':
-        runQuestion20();
-        break;
-      case 'A':
-        await runAllQuestions();
-        break;
-      case 'G':
-        await runGroup([1, 2, 3, 4, 5]);
-        break;
-      case 'M':
-        await runGroup([6, 7, 8, 9, 10]);
-        break;
-      case 'D':
-        await runGroup([11, 12, 13, 14, 15]);
-        break;
-      case 'F':
-        await runGroup([16, 17, 18, 19, 20]);
-        break;
-      case 'X':
-        print('\nThank you for using the Dart Laboratory Program!');
-        print('Goodbye! 👋\n');
-        continueRunning = false;
-        break;
-      default:
-        print('\n❌ Invalid choice. Please select a valid option.\n');
-    }
-
-    if (continueRunning && choice != 'X') {
-      stdout.write('\nPress Enter to continue...');
-      stdin.readLineSync();
-    }
-  }
-}
-
 Future<void> runAllQuestions() async {
   print('\n' + '=' * 60);
-  print('RUNNING ALL 20 QUESTIONS');
+  print('RUNNING ALL 19 QUESTIONS');
   print('=' * 60);
 
-  // Run sync questions
+  // Run in logical order
   runQuestion1();
   await Future.delayed(Duration(milliseconds: 300));
   runQuestion2();
@@ -699,15 +570,13 @@ Future<void> runAllQuestions() async {
   await Future.delayed(Duration(milliseconds: 300));
   runQuestion19();
   await Future.delayed(Duration(milliseconds: 300));
-  runQuestion20();
-  await Future.delayed(Duration(milliseconds: 300));
 
-  // Run async questions
+  // Run async questions at the end
   await runQuestion16();
   await runQuestion17();
 
   print('\n' + '=' * 60);
-  print('✓ ALL 20 QUESTIONS COMPLETED SUCCESSFULLY!');
+  print('✓ ALL 19 QUESTIONS COMPLETED SUCCESSFULLY!');
   print('=' * 60);
 }
 
@@ -775,10 +644,109 @@ Future<void> runGroup(List<int> questions) async {
       case 19:
         runQuestion19();
         break;
-      case 20:
-        runQuestion20();
-        break;
     }
     await Future.delayed(Duration(milliseconds: 300));
+  }
+}
+
+void main() async {
+  bool continueRunning = true;
+
+  print('\n🎓 DART LABORATORY ASSIGNMENT - QUESTIONS 1-19 🎓');
+  print('Group Members: [Your Name] & [Partner\'s Name]');
+  print('Date: ${DateTime.now().toLocal()}');
+
+  while (continueRunning) {
+    displayMainMenu();
+
+    stdout.write('\nEnter your choice (1-19, A, G, M, D, F, X): ');
+    String? choice = stdin.readLineSync()?.toUpperCase();
+
+    switch (choice) {
+      case '1':
+        runQuestion1();
+        break;
+      case '2':
+        runQuestion2();
+        break;
+      case '3':
+        runQuestion3();
+        break;
+      case '4':
+        runQuestion4();
+        break;
+      case '5':
+        runQuestion5();
+        break;
+      case '6':
+        runQuestion6();
+        break;
+      case '7':
+        runQuestion7();
+        break;
+      case '8':
+        runQuestion8();
+        break;
+      case '9':
+        runQuestion9();
+        break;
+      case '10':
+        runQuestion10();
+        break;
+      case '11':
+        runQuestion11();
+        break;
+      case '12':
+        runQuestion12();
+        break;
+      case '13':
+        runQuestion13();
+        break;
+      case '14':
+        runQuestion14();
+        break;
+      case '15':
+        runQuestion15();
+        break;
+      case '16':
+        await runQuestion16();
+        break;
+      case '17':
+        await runQuestion17();
+        break;
+      case '18':
+        runQuestion18();
+        break;
+      case '19':
+        runQuestion19();
+        break;
+      case 'A':
+        await runAllQuestions();
+        break;
+      case 'G':
+        await runGroup([1, 2, 3, 4, 5]);
+        break;
+      case 'M':
+        await runGroup([6, 7, 8, 9, 10]);
+        break;
+      case 'D':
+        await runGroup([11, 12, 13, 14, 15]);
+        break;
+      case 'F':
+        await runGroup([16, 17, 18, 19]);
+        break;
+      case 'X':
+        print('\nThank you for using the Dart Laboratory Program!');
+        print('Goodbye! 👋\n');
+        continueRunning = false;
+        break;
+      default:
+        print('\n❌ Invalid choice. Please select a valid option.\n');
+    }
+
+    if (continueRunning && choice != 'X') {
+      stdout.write('\nPress Enter to continue...');
+      stdin.readLineSync();
+    }
   }
 }
