@@ -40,7 +40,7 @@ void createStudent({required String name, required int age}) {
   print('Student Name: $name');
   print('Student Age: $age');
   print('Student ID: STU-${name.substring(0, 3).toUpperCase()}${age}');
-  print('Status: ✅ Successfully enrolled');
+  print('Status: Successfully enrolled');
   print('----------------------------');
 }
 
@@ -64,7 +64,7 @@ void createTeacher(String name, [String? subject]) {
   print(
     'Teacher ID: TCH-${name.split(' ').map((s) => s[0]).join('').toUpperCase()}',
   );
-  print('Status: 🎯 Active');
+  print('Status: Active');
   print('----------------------------');
 }
 
@@ -75,7 +75,7 @@ void runQuestion3() {
   print('Demonstrating required and optional parameters:\n');
 
   createTeacher('Mr. Davis', 'Mathematics');
-  createTeacher('Ms. Rodriguez'); // Shows 'Subject not assigned'
+  createTeacher('Ms. Rodriguez');
 
   print(
     '\nNote: When subject is not provided, it prints "Subject not assigned"',
@@ -113,31 +113,27 @@ abstract class Registrable {
 // ==================== QUESTION 19 ====================
 mixin NotificationMixin {
   void sendCourseNotification(String studentName, String courseName) {
-    print('📧 Notification sent to $studentName:');
-    print('   "You have been registered for $courseName"');
+    print('Notification sent to $studentName:');
+    print('  "You have been registered for $courseName"');
   }
 }
 
 // ==================== QUESTION 4 ====================
-// Main Student class that incorporates all features
 class Student extends Person
     with AttendanceMixin, NotificationMixin
     implements Registrable {
   int age;
   List<String> courses = [];
 
-  // Constructor for Q4
   Student(String name, this.age) : super(name);
 
-  // Method for Q9
   @override
   void registerCourse(String courseName) {
     courses.add(courseName);
     print('$name has registered for: $courseName');
-    sendCourseNotification(name, courseName); // From NotificationMixin
+    sendCourseNotification(name, courseName);
   }
 
-  // Additional method to show all info
   void showInfo() {
     introduce();
     print('Age: $age');
@@ -152,7 +148,7 @@ void runQuestion4() {
   print('=' * 50);
 
   Student student1 = Student('John Smith', 17);
-  print('✓ Student class created with:');
+  print('Student class created with:');
   print('  - Properties: name, age');
   print('  - Constructor: Student(this.name, this.age)');
   print('  - First student: ${student1.name}, ${student1.age} years old');
@@ -201,7 +197,7 @@ void runQuestion8() {
   print('QUESTION 8: Abstract Class Registrable');
   print('=' * 50);
 
-  print('✓ Abstract class Registrable created');
+  print('Abstract class Registrable created');
   print('  - Contains abstract method: registerCourse()');
   print('  - Cannot be instantiated directly');
   print('  - Must be implemented by concrete classes');
@@ -229,7 +225,7 @@ void runQuestion10() {
   print('QUESTION 10: AttendanceMixin');
   print('=' * 50);
 
-  print('✓ Mixin created: AttendanceMixin');
+  print('Mixin created: AttendanceMixin');
   print('  - Private variable: _attendanceCount');
   print('  - Method: markAttendance()');
   print('  - Getter: attendanceCount');
@@ -284,18 +280,15 @@ void runQuestion13() {
   print('QUESTION 13: Map with Student Objects (ID as Key)');
   print('=' * 50);
 
-  // Create students first
   Student s1 = Student('Alex Turner', 16);
   Student s2 = Student('Maya Patel', 15);
   Student s3 = Student('Ryan Kim', 17);
   Student s4 = Student('Lily Chen', 16);
 
-  // Generate student IDs using the same logic as createStudent function
   String generateStudentId(String name, int age) {
     return 'STU-${name.substring(0, 3).toUpperCase()}${age}';
   }
 
-  // Create map with student ID as key and Student object as value
   Map<String, Student> studentMap = {
     generateStudentId(s1.name, s1.age): s1,
     generateStudentId(s2.name, s2.age): s2,
@@ -303,16 +296,16 @@ void runQuestion13() {
     generateStudentId(s4.name, s4.age): s4,
   };
 
-  print('Student Map (Student ID → Student Object):');
+  print('Student Map (Student ID -> Student Object):');
   print('Total students in map: ${studentMap.length}');
 
   print('\nAll Student Names (accessed via map):');
   studentMap.forEach((id, student) {
-    print('  • ID: $id → Name: ${student.name} (Age: ${student.age})');
+    print('  ID: $id -> Name: ${student.name} (Age: ${student.age})');
   });
 
   print('\nMap characteristics:');
-  print('  - Key-value pairs (Student ID → Student Object)');
+  print('  - Key-value pairs (Student ID -> Student Object)');
   print('  - Keys must be unique (student IDs are unique)');
   print('  - Fast lookup by key (O(1) access time)');
   print('  - Perfect for database-like lookups');
@@ -332,7 +325,6 @@ void runQuestion14() {
 
   print('Printing names using anonymous function with forEach:');
 
-  // Anonymous function (no name, defined inline)
   students.forEach((student) {
     print('  - ${student.name}');
   });
@@ -351,8 +343,7 @@ void runQuestion14() {
 }
 
 // ==================== QUESTION 15 ====================
-// Arrow function (single expression function)
-void greetStudent(String name) => print('🎓 Welcome to class, $name!');
+void greetStudent(String name) => print('Welcome to class, $name!');
 
 void runQuestion15() {
   print('\n' + '=' * 50);
@@ -380,9 +371,8 @@ Future<void> runQuestion16() async {
 
   print('Starting to load students (simulating network request)...');
 
-  // Using the shared loadStudents() function
   var students = await loadStudents();
-  print('✓ Students loaded successfully!');
+  print('Students loaded successfully!');
   print('First student: ${students.first.name}');
   print('Total loaded: ${students.length} students');
 
@@ -400,15 +390,14 @@ Future<void> runQuestion17() async {
   print('QUESTION 17: Using await with loadStudents()');
   print('=' * 50);
 
-  print('Calling loadStudents() with await in main-like context...');
+  print('Calling loadStudents() with await...');
 
-  // Using the shared loadStudents() function
   List<Student> students = await loadStudents();
   print('Total students loaded: ${students.length}');
 
   print('\nStudent Roster:');
   for (var student in students) {
-    print('  • ${student.name} (Age: ${student.age})');
+    print('  - ${student.name} (Age: ${student.age})');
   }
 
   print('\nUsing await:');
@@ -441,22 +430,22 @@ void runQuestion18() {
   print('5. Testability: Mixins can be tested independently');
 
   print('\nDIFFERENCES BETWEEN INHERITANCE AND MIXINS:');
-  print('┌─────────────────────────────────────────────────┐');
-  print('│     INHERITANCE                MIXINS           │');
-  print('├─────────────────────────────────────────────────┤');
-  print('│ "is-a" relationship         "has-a" capability  │');
-  print('│ Single parent only          Multiple mixins     │');
-  print('│ Deep class hierarchy        Flat composition    │');
-  print('│ Tight coupling              Loose coupling      │');
-  print('│ Compile-time resolution     Linearized order    │');
-  print('│ Hard to change later        Easy to add/remove  │');
-  print('└─────────────────────────────────────────────────┘');
+  print('-------------------------------------------------');
+  print('INHERITANCE                    MIXINS');
+  print('-------------------------------------------------');
+  print('"is-a" relationship           "has-a" capability');
+  print('Single parent only            Multiple mixins');
+  print('Deep class hierarchy          Flat composition');
+  print('Tight coupling                Loose coupling');
+  print('Compile-time resolution       Linearized order');
+  print('Hard to change later          Easy to add/remove');
+  print('-------------------------------------------------');
 
   print('\nPRACTICAL EXAMPLE IN OUR CODE:');
-  print('• Inheritance: Student IS-A Person (gets basic identity)');
-  print('• Mixin 1: Student HAS Attendance tracking capability');
-  print('• Mixin 2: Student HAS Notification capability');
-  print('• Result: Flexible, reusable behaviors without complex hierarchy');
+  print('  Inheritance: Student IS-A Person (gets basic identity)');
+  print('  Mixin 1: Student HAS Attendance tracking capability');
+  print('  Mixin 2: Student HAS Notification capability');
+  print('Result: Flexible, reusable behaviors without complex hierarchy');
 }
 
 // ==================== QUESTION 19 ====================
@@ -487,10 +476,10 @@ void runQuestion19() {
   print('   Course registration method is required by interface');
 
   print('\nStudent now combines:');
-  print('  • Inheritance (Person)');
-  print('  • 2 Mixins (Attendance, Notification)');
-  print('  • 1 Interface (Registrable)');
-  print('  • All working together seamlessly!');
+  print('  - Inheritance (Person)');
+  print('  - 2 Mixins (Attendance, Notification)');
+  print('  - 1 Interface (Registrable)');
+  print('All working together seamlessly!');
 }
 
 // ==================== MAIN MENU SYSTEM ====================
@@ -500,34 +489,34 @@ void displayMainMenu() {
   print('=' * 70);
 
   print('\nSELECT QUESTION TO RUN:');
-  print('┌─────────────────────────────────────────────────┐');
-  print('│  1. Question 1: Welcome Message                 │');
-  print('│  2. Question 2: Named Parameters                │');
-  print('│  3. Question 3: Optional Parameters             │');
-  print('│  4. Question 4: Class & Constructor             │');
-  print('│  5. Question 5: Object Creation                 │');
-  print('│  6. Question 6: Class with Method               │');
-  print('│  7. Question 7: Inheritance                     │');
-  print('│  8. Question 8: Abstract Class                  │');
-  print('│  9. Question 9: Interface Implementation        │');
-  print('│ 10. Question 10: Mixin Creation                 │');
-  print('│ 11. Question 11: Using Mixin                    │');
-  print('│ 12. Question 12: List of Objects                │');
-  print('│ 13. Question 13: Map of Objects                 │');
-  print('│ 14. Question 14: Anonymous Function             │');
-  print('│ 15. Question 15: Arrow Function                 │');
-  print('│ 16. Question 16: Async Function                 │');
-  print('│ 17. Question 17: Using await                    │');
-  print('│ 18. Question 18: Mixins vs Inheritance          │');
-  print('│ 19. Question 19: Another Mixin                  │');
-  print('├─────────────────────────────────────────────────┤');
-  print('│ A.  Run ALL Questions (1-19)                    │');
-  print('│ G.  Run Group 1-5 (Basics)                      │');
-  print('│ M.  Run Group 6-10 (OOP)                        │');
-  print('│ D.  Run Group 11-15 (Collections & Functions)   │');
-  print('│ F.  Run Group 16-19 (Advanced Topics)           │');
-  print('│ X.  Exit Program                                │');
-  print('└─────────────────────────────────────────────────┘');
+  print('---------------------------------------------------');
+  print('  1. Question 1: Welcome Message');
+  print('  2. Question 2: Named Parameters');
+  print('  3. Question 3: Optional Parameters');
+  print('  4. Question 4: Class & Constructor');
+  print('  5. Question 5: Object Creation');
+  print('  6. Question 6: Class with Method');
+  print('  7. Question 7: Inheritance');
+  print('  8. Question 8: Abstract Class');
+  print('  9. Question 9: Interface Implementation');
+  print(' 10. Question 10: Mixin Creation');
+  print(' 11. Question 11: Using Mixin');
+  print(' 12. Question 12: List of Objects');
+  print(' 13. Question 13: Map of Objects');
+  print(' 14. Question 14: Anonymous Function');
+  print(' 15. Question 15: Arrow Function');
+  print(' 16. Question 16: Async Function');
+  print(' 17. Question 17: Using await');
+  print(' 18. Question 18: Mixins vs Inheritance');
+  print(' 19. Question 19: Another Mixin');
+  print('---------------------------------------------------');
+  print(' A.  Run ALL Questions (1-19)');
+  print(' G.  Run Group 1-5 (Basics)');
+  print(' M.  Run Group 6-10 (OOP)');
+  print(' D.  Run Group 11-15 (Collections & Functions)');
+  print(' F.  Run Group 16-19 (Advanced Topics)');
+  print(' X.  Exit Program');
+  print('---------------------------------------------------');
 }
 
 Future<void> runAllQuestions() async {
@@ -535,7 +524,6 @@ Future<void> runAllQuestions() async {
   print('RUNNING ALL 19 QUESTIONS');
   print('=' * 60);
 
-  // Run in logical order
   runQuestion1();
   await Future.delayed(Duration(milliseconds: 300));
   runQuestion2();
@@ -571,12 +559,11 @@ Future<void> runAllQuestions() async {
   runQuestion19();
   await Future.delayed(Duration(milliseconds: 300));
 
-  // Run async questions at the end
   await runQuestion16();
   await runQuestion17();
 
   print('\n' + '=' * 60);
-  print('✓ ALL 19 QUESTIONS COMPLETED SUCCESSFULLY!');
+  print('ALL 19 QUESTIONS COMPLETED SUCCESSFULLY!');
   print('=' * 60);
 }
 
@@ -652,7 +639,7 @@ Future<void> runGroup(List<int> questions) async {
 void main() async {
   bool continueRunning = true;
 
-  print('\n🎓 DART LABORATORY ASSIGNMENT - QUESTIONS 1-19 🎓');
+  print('\nDART LABORATORY ASSIGNMENT - QUESTIONS 1-19');
   print('Group Members: [Your Name] & [Partner\'s Name]');
   print('Date: ${DateTime.now().toLocal()}');
 
@@ -737,11 +724,11 @@ void main() async {
         break;
       case 'X':
         print('\nThank you for using the Dart Laboratory Program!');
-        print('Goodbye! 👋\n');
+        print('Goodbye!\n');
         continueRunning = false;
         break;
       default:
-        print('\n❌ Invalid choice. Please select a valid option.\n');
+        print('\nInvalid choice. Please select a valid option.\n');
     }
 
     if (continueRunning && choice != 'X') {
